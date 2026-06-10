@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demond Mack — SOC Analyst | Threat Detection & Incident Response</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0a0e1a;
+--bg-card:#0d1220;
+--bg-elevated:#111828;
+--border:#1a2240;
+--border-light:#243060;
+--cyan:#00d4ff;
+--cyan-dim:#004d5e;
+--cyan-glow:rgba(0,212,255,0.08);
+--text:#e8f0ff;
+--text-sec:#6080a0;
+--text-muted:#2a3a50;
+--green:#00ff87;
+--green-dim:rgba(0,255,135,0.1);
+--red:#ff4a4a;
+--red-dim:rgba(255,74,74,0.1);
+--amber:#ffaa00;
+--amber-dim:rgba(255,170,0,0.1);
+--mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,14,26,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1100px;margin:0 auto;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
+.nav-brand{font-family:var(--mono);font-size:13px;color:var(--cyan);letter-spacing:0.05em}
+.nav-links{display:flex;gap:0;list-style:none}
+.nav-links a{font-size:12px;color:var(--text-sec);text-decoration:none;letter-spacing:0.05em;padding:6px 16px;border-radius:4px;transition:all 0.2s;display:block}
+.nav-links a:hover{color:var(--cyan);background:var(--cyan-glow)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:54px}
+
+/* LOG BG */
+#logBg{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+#logInner{position:absolute;top:0;left:0;right:0;padding:14px 24px;display:flex;flex-direction:column;gap:4px}
+.ll{font-family:'JetBrains Mono',monospace;font-size:10.5px;white-space:nowrap;line-height:1.5;opacity:1}
+.ll-d{color:#1e3048}
+.ll-i{color:#1a3840}
+.ll-w{color:#2e2810}
+.ll-a{color:#14301e}
+.ll-c{color:#301414}
+
+#logFadeL{position:absolute;top:0;left:0;bottom:0;width:35%;background:linear-gradient(to right,rgba(10,14,26,1) 0%,rgba(10,14,26,0) 100%);z-index:2;pointer-events:none}
+#logFadeR{position:absolute;top:0;right:0;bottom:0;width:35%;background:linear-gradient(to left,rgba(10,14,26,1) 0%,rgba(10,14,26,0) 100%);z-index:2;pointer-events:none}
+#logFadeT{position:absolute;top:0;left:0;right:0;height:20%;background:linear-gradient(to bottom,rgba(10,14,26,1) 0%,rgba(10,14,26,0) 100%);z-index:2;pointer-events:none}
+#logFadeB{position:absolute;bottom:0;left:0;right:0;height:30%;background:linear-gradient(to top,rgba(10,14,26,1) 0%,rgba(10,14,26,0) 100%);z-index:2;pointer-events:none}
+
+.scan-line{position:absolute;left:0;right:0;height:1px;background:rgba(0,212,255,0.04);z-index:3;pointer-events:none;top:0}
+
+.hero-content{position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:0 2rem;width:100%}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;gap:12px;opacity:0;animation:fadein 0.8s ease 0.2s forwards}
+.hero-eyebrow::before{content:'';display:block;width:28px;height:1px;background:var(--cyan)}
+.hero-name{font-size:clamp(2.5rem,7vw,5rem);font-weight:600;color:var(--text);letter-spacing:-0.03em;line-height:1.05;margin-bottom:0.4rem;opacity:0;animation:fadein 0.8s ease 0.4s forwards}
+.hero-title{font-size:clamp(0.9rem,2vw,1.2rem);font-weight:300;color:var(--cyan);letter-spacing:0.04em;margin-bottom:1.25rem;opacity:0;animation:fadein 0.8s ease 0.6s forwards}
+.hero-desc{font-size:14px;color:var(--text-sec);max-width:520px;line-height:1.85;margin-bottom:2.5rem;opacity:0;animation:fadein 0.8s ease 0.8s forwards}
+.hero-stats{display:flex;gap:2rem;margin-bottom:2.5rem;flex-wrap:wrap;opacity:0;animation:fadein 0.8s ease 1s forwards}
+.h-stat-num{font-family:var(--mono);font-size:1.9rem;font-weight:500;color:var(--cyan);line-height:1}
+.h-stat-label{font-size:10px;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:8px}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;opacity:0;animation:fadein 0.8s ease 1.2s forwards}
+.btn-pri{background:var(--cyan);color:#050810;font-size:12px;font-weight:600;padding:10px 24px;border-radius:3px;text-decoration:none;letter-spacing:0.08em;transition:all 0.2s;display:inline-block}
+.btn-pri:hover{background:#33ddff}
+.btn-sec{border:1px solid var(--border-light);color:var(--text-sec);font-size:12px;padding:10px 24px;border-radius:3px;text-decoration:none;letter-spacing:0.06em;transition:all 0.2s;display:inline-block}
+.btn-sec:hover{border-color:var(--cyan);color:var(--cyan)}
+@keyframes fadein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+section{padding:5rem 2rem}
+.sec-inner{max-width:1100px;margin:0 auto}
+.sec-eye{font-family:var(--mono);font-size:10px;color:var(--cyan);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.75rem}
+.sec-title{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:500;color:var(--text);margin-bottom:1rem;letter-spacing:-0.01em}
+.sec-sub{font-size:14px;color:var(--text-sec);max-width:580px;line-height:1.85;margin-bottom:3rem}
+
+/* PIPELINE WITH DIAGRAM THUMBNAIL */
+.pipe-block{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:18px 20px;margin-bottom:12px;position:relative}
+.pipe-title{font-family:var(--mono);font-size:10px;color:var(--text-muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px}
+.pipe-row{display:flex;align-items:center;gap:12px}
+.pipe-flow{display:flex;align-items:center;flex-wrap:wrap;gap:0;flex:1}
+.pipe-step{background:var(--bg-elevated);border:1px solid var(--border);border-radius:3px;padding:6px 12px;font-size:11px;font-family:var(--mono);color:var(--text-sec);white-space:nowrap}
+.pipe-step.hi{border-color:var(--cyan-dim);color:var(--cyan)}
+.pipe-arrow{color:var(--text-muted);font-size:12px;padding:0 6px;flex-shrink:0}
+
+/* DIAGRAM THUMBNAIL */
+.diag-thumb{width:44px;height:44px;border:1px solid var(--border);border-radius:5px;background:var(--bg-elevated);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;position:relative;transition:border-color 0.2s}
+.diag-thumb:hover{border-color:var(--cyan)}
+.diag-thumb svg{width:32px;height:32px;opacity:0.5;transition:opacity 0.2s}
+.diag-thumb:hover svg{opacity:1}
+.diag-thumb-label{font-family:var(--mono);font-size:8px;color:var(--text-muted);text-align:center;margin-top:3px}
+
+/* DIAGRAM OVERLAY */
+.diag-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(5,8,16,0.85);align-items:center;justify-content:center}
+.diag-overlay.show{display:flex}
+.diag-box{background:var(--bg-card);border:1px solid var(--border-light);border-radius:10px;padding:24px;max-width:900px;width:94%;position:relative}
+.diag-close{position:absolute;top:14px;right:16px;font-family:var(--mono);font-size:13px;color:var(--text-muted);cursor:pointer;background:none;border:none;transition:color 0.2s}
+.diag-close:hover{color:var(--cyan)}
+.diag-title{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:16px}
+
+.stack-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-top:2rem}
+.stack-item{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:14px;display:flex;align-items:center;gap:10px;transition:border-color 0.2s}
+.stack-item:hover{border-color:var(--cyan-dim)}
+.si-icon{width:34px;height:34px;border-radius:5px;background:var(--bg-elevated);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;font-family:var(--mono);color:var(--cyan);flex-shrink:0;border:1px solid var(--border)}
+.si-name{font-size:12px;font-weight:500;color:var(--text)}
+.si-role{font-size:10px;color:var(--text-muted);margin-top:1px}
+
+.case-list{display:flex;flex-direction:column;gap:16px}
+.case-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color 0.2s}
+.case-card:hover{border-color:var(--border-light)}
+.case-head{padding:22px 26px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;user-select:none}
+.case-head:hover{background:var(--bg-elevated)}
+.case-tag{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:7px}
+.case-title{font-size:16px;font-weight:500;color:var(--text);margin-bottom:9px}
+.badges{display:flex;gap:5px;flex-wrap:wrap}
+.badge{font-size:10px;font-weight:500;padding:2px 7px;border-radius:2px;letter-spacing:0.03em;font-family:var(--mono)}
+.b-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,74,74,0.25)}
+.b-amber{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(255,170,0,0.25)}
+.b-blue{background:rgba(58,123,213,0.1);color:#6ba3e8;border:1px solid rgba(58,123,213,0.25)}
+.b-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,255,135,0.25)}
+.b-cyan{background:var(--cyan-glow);color:var(--cyan);border:1px solid rgba(0,212,255,0.2)}
+.case-chevron{color:var(--text-muted);font-size:16px;transition:transform 0.3s;flex-shrink:0;margin-top:2px;font-family:var(--mono)}
+.case-card.open .case-chevron{transform:rotate(180deg)}
+.case-body{display:none;border-top:1px solid var(--border)}
+.case-card.open .case-body{display:block}
+
+.tab-bar{display:flex;border-bottom:1px solid var(--border);padding:0 26px;background:var(--bg-elevated);overflow-x:auto}
+.tb{font-size:11px;font-weight:500;padding:12px 16px;color:var(--text-muted);cursor:pointer;border:none;background:none;letter-spacing:0.08em;text-transform:uppercase;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;font-family:var(--mono);white-space:nowrap;flex-shrink:0}
+.tb:hover{color:var(--text-sec)}
+.tb.on{color:var(--cyan);border-bottom-color:var(--cyan)}
+.tab-content{padding:22px 26px}
+.tp{display:none}
+.tp.on{display:block}
+
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px;margin-bottom:18px}
+.sbox{background:var(--bg-elevated);border:1px solid var(--border);border-radius:5px;padding:12px;text-align:center}
+.sbox-num{font-family:var(--mono);font-size:1.3rem;font-weight:500;color:var(--cyan)}
+.sbox.g .sbox-num{color:var(--green)}
+.sbox-lab{font-size:9px;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:3px}
+.body-text{font-size:13px;color:var(--text-sec);line-height:1.8;margin-bottom:14px}
+.find-tag{display:inline-block;background:rgba(0,255,135,0.07);border:1px solid rgba(0,255,135,0.2);color:var(--green);font-size:10px;font-weight:500;padding:3px 9px;border-radius:2px;letter-spacing:0.08em;margin-bottom:6px;font-family:var(--mono)}
+.sh{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin:14px 0 8px;font-family:var(--mono)}
+.code-block{background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:3px;padding:10px 14px;font-family:var(--mono);font-size:11px;color:#5090c0;overflow-x:auto;margin:8px 0;line-height:1.6}
+
+.fitem{border:1px solid var(--border);border-radius:4px;margin-bottom:6px;overflow:hidden;background:var(--bg-elevated)}
+.fitem-head{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;cursor:pointer;user-select:none;transition:background 0.15s}
+.fitem-head:hover{background:rgba(0,212,255,0.04)}
+.fitem-arrow{color:var(--cyan);font-size:10px;margin-top:3px;flex-shrink:0;transition:transform 0.2s;font-family:var(--mono)}
+.fitem.open .fitem-arrow{transform:rotate(90deg)}
+.fitem-text{font-size:13px;color:var(--text-sec);line-height:1.6;flex:1}
+.fitem-body{display:none;padding:0 12px 10px 32px;border-top:1px solid var(--border)}
+.fitem.open .fitem-body{display:block}
+.fitem-cmd{background:rgba(0,0,0,0.5);border:1px solid var(--border);border-left:2px solid var(--cyan);border-radius:0 3px 3px 0;padding:8px 12px;font-family:var(--mono);font-size:11px;color:#5090c0;margin-top:8px;overflow-x:auto;line-height:1.6}
+.fitem-cmd-label{font-size:10px;color:var(--text-muted);margin-bottom:4px;font-family:var(--mono);letter-spacing:0.05em}
+
+.ioc-box{background:rgba(255,74,74,0.04);border:1px solid rgba(255,74,74,0.15);border-radius:3px;padding:10px 14px;margin:8px 0}
+.ioc-item{font-size:11px;font-family:var(--mono);color:#c06060;margin-bottom:3px;line-height:1.5}
+.step-box{background:var(--bg-elevated);border:1px solid var(--border);border-left:2px solid var(--amber);border-radius:0 3px 3px 0;padding:10px 14px;margin:8px 0}
+.step-item{font-size:12px;color:var(--text-sec);margin-bottom:4px;line-height:1.6}
+.step-item strong{color:var(--amber)}
+.mtable{width:100%;border-collapse:collapse;font-size:11px}
+.mtable th{text-align:left;padding:7px 10px;background:var(--bg-elevated);color:var(--text-muted);font-weight:500;letter-spacing:0.05em;border-bottom:1px solid var(--border);font-family:var(--mono)}
+.mtable td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--text-sec);vertical-align:top}
+.mtable td:first-child{font-family:var(--mono);color:var(--cyan);white-space:nowrap}
+.tl{display:flex;flex-direction:column}
+.tl-item{display:flex;gap:14px;padding-bottom:18px;position:relative}
+.tl-item::before{content:'';position:absolute;left:6px;top:17px;bottom:0;width:1px;background:var(--border)}
+.tl-item:last-child::before{display:none}
+.tl-dot{width:13px;height:13px;border-radius:50%;flex-shrink:0;margin-top:2px;border:2px solid var(--bg-card)}
+.tl-body{flex:1}
+.tl-time{font-family:var(--mono);font-size:9px;color:var(--text-muted);margin-bottom:2px}
+.tl-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:3px}
+.tl-detail{font-size:11px;color:var(--text-sec);line-height:1.6}
+
+.ev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.ev-slot{background:var(--bg-elevated);border:1px solid var(--border);border-radius:5px;overflow:hidden}
+.ev-img-placeholder{height:120px;background:var(--bg);display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border);font-size:24px;opacity:0.2}
+.ev-img-placeholder img{width:100%;height:100%;object-fit:cover;opacity:1}
+.ev-caption{padding:8px 10px}
+.ev-caption-title{font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px}
+.ev-caption-sub{font-size:10px;color:var(--text-muted)}
+
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.about-text p{font-size:14px;color:var(--text-sec);line-height:1.85;margin-bottom:1rem}
+.skills-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.skill-item{display:flex;align-items:center;gap:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-size:12px;color:var(--text-sec);transition:border-color 0.2s}
+.skill-item:hover{border-color:var(--border-light)}
+.skill-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);flex-shrink:0}
+
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.contact-card{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:18px;text-decoration:none;display:block;transition:border-color 0.2s}
+.contact-card:hover{border-color:var(--cyan-dim)}
+.cc-label{font-size:10px;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;font-family:var(--mono)}
+.cc-value{font-size:13px;color:var(--cyan);font-weight:500}
+
+footer{border-top:1px solid var(--border);padding:1.5rem 2rem;text-align:center}
+footer p{font-size:11px;color:var(--text-muted);font-family:var(--mono)}
+
+.reveal{opacity:0;transform:translateY(16px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal.vis{opacity:1;transform:none}
+
+@media(max-width:768px){
+.nav-links{display:none}
+.about-grid{grid-template-columns:1fr}
+.hero-stats{gap:1.5rem}
+.pipe-row{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">DM // SOC</div>
+    <ul class="nav-links">
+      <li><a href="#environment">Environment</a></li>
+      <li><a href="#investigations">Investigations</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero">
+  <div id="logBg">
+    <div id="logInner"></div>
+    <div id="logFadeL"></div>
+    <div id="logFadeR"></div>
+    <div id="logFadeT"></div>
+    <div id="logFadeB"></div>
+  </div>
+  <div class="scan-line" id="scanLine"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">SOC Portfolio Lab</div>
+    <div class="hero-name">Demond Mack</div>
+    <div class="hero-title">SOC Analyst &nbsp;&nbsp;|&nbsp;&nbsp; Threat Detection &amp; Incident Response</div>
+    <div class="hero-desc">Built and operated a fully integrated enterprise SOC environment on Azure. Real external attacks detected, investigated, and closed using Splunk, ServiceNow, Suricata, and GoPhish — with every decision documented from first alert to resolved ticket.</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="h-stat-num" id="hn1">0</div><div class="h-stat-label">Brute force attempts detected</div></div>
+      <div class="hero-stat"><div class="h-stat-num" id="hn2">0</div><div class="h-stat-label">IDS network alerts</div></div>
+      <div class="hero-stat"><div class="h-stat-num" id="hn3">0</div><div class="h-stat-label">End-to-end investigations</div></div>
+      <div class="hero-stat"><div class="h-stat-num" id="hn4">0</div><div class="h-stat-label">Validated detections</div></div>
+    </div>
+    <div class="hero-cta">
+      <a href="#investigations" class="btn-pri">View Investigations</a>
+      <a href="#environment" class="btn-sec">See the Environment</a>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGRAM OVERLAY -->
+<div class="diag-overlay" id="diagOverlay" onclick="closeDiag(event)">
+  <div class="diag-box">
+    <button class="diag-close" onclick="document.getElementById('diagOverlay').classList.remove('show')">✕ close</button>
+    <div class="diag-title" id="diagTitle">Environment Architecture</div>
+    <svg id="diagSvg" viewBox="0 0 860 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
+
+      <!-- AZURE BOUNDARY -->
+      <rect x="10" y="10" width="580" height="420" rx="7" fill="none" stroke="#1a2240" stroke-width="1.5" stroke-dasharray="7,4"/>
+      <text x="24" y="30" font-family="JetBrains Mono,monospace" font-size="10" fill="#2a3a50" letter-spacing="2">AZURE CLOUD — suffice.local</text>
+
+      <!-- VNET -->
+      <rect x="26" y="40" width="360" height="270" rx="5" fill="none" stroke="#1a2640" stroke-width="1" stroke-dasharray="3,3"/>
+      <text x="38" y="56" font-family="JetBrains Mono,monospace" font-size="8" fill="#1e2e48">VNet: SUFFice-vnet / 10.0.0.0/24</text>
+
+      <!-- DC BOX -->
+      <rect x="44" y="68" width="148" height="96" rx="4" fill="#0e1520" stroke="#1a2240" stroke-width="1" id="box-dc"/>
+      <rect x="44" y="68" width="148" height="3" rx="4" fill="#00d4ff" opacity="0.35" id="top-dc"/>
+      <text x="118" y="90" font-family="JetBrains Mono,monospace" font-size="10" fill="#00d4ff" text-anchor="middle" font-weight="500">SUFFice</text>
+      <text x="118" y="104" font-family="JetBrains Mono,monospace" font-size="8" fill="#3a5070" text-anchor="middle">Domain Controller</text>
+      <text x="118" y="116" font-family="JetBrains Mono,monospace" font-size="8" fill="#2a3a58" text-anchor="middle">10.0.0.4 · WS2022</text>
+      <text x="118" y="128" font-family="JetBrains Mono,monospace" font-size="7" fill="#1e2e44" text-anchor="middle">Active Directory · DNS</text>
+      <text x="118" y="140" font-family="JetBrains Mono,monospace" font-size="7" fill="#1e2e44" text-anchor="middle">Sysmon · UF Agent</text>
+      <text x="118" y="153" font-family="JetBrains Mono,monospace" font-size="7" fill="#1e2e44" text-anchor="middle">suffice.local</text>
+
+      <!-- CLIENT BOX -->
+      <rect x="44" y="196" width="148" height="100" rx="4" fill="#0e1520" stroke="#1a2240" stroke-width="1" id="box-client"/>
+      <rect x="44" y="196" width="148" height="3" rx="4" fill="#ffaa00" opacity="0.35" id="top-client"/>
+      <text x="118" y="218" font-family="JetBrains Mono,monospace" font-size="10" fill="#ffaa00" text-anchor="middle" font-weight="500">WIN-SERVER-CLIE</text>
+      <text x="118" y="232" font-family="JetBrains Mono,monospace" font-size="8" fill="#3a5070" text-anchor="middle">Windows Client</text>
+      <text x="118" y="244" font-family="JetBrains Mono,monospace" font-size="8" fill="#2a3a58" text-anchor="middle">10.0.0.5 · 20.123.90.160</text>
+      <text x="118" y="256" font-family="JetBrains Mono,monospace" font-size="7" fill="#1e2e44" text-anchor="middle">Sysmon · Suricata IDS</text>
+      <text x="118" y="268" font-family="JetBrains Mono,monospace" font-size="7" fill="#1e2e44" text-anchor="middle">GoPhish · Papercut SMTP</text>
+      <text x="118" y="280" font-family="JetBrains Mono,monospace" font-size="7" fill="#1e2e44" text-anchor="middle">UF Agent · Atomic Red Team</text>
+
+      <!-- SPLUNK BOX -->
+      <rect x="240" y="120" width="136" height="88" rx="4" fill="#0e1520" stroke="#1a2240" stroke-width="1" id="box-splunk"/>
+      <rect x="240" y="120" width="136" height="3" rx="4" fill="#00d4ff" opacity="0.6" id="top-splunk"/>
+      <text x="308" y="142" font-family="JetBrains Mono,monospace" font-size="10" fill="#00d4ff" text-anchor="middle" font-weight="500">Splunk Server</text>
+      <text x="308" y="156" font-family="JetBrains Mono,monospace" font-size="8" fill="#3a5070" text-anchor="middle">Linux VM · East US</text>
+      <text x="308" y="168" font-family="JetBrains Mono,monospace" font-size="8" fill="#2a3a58" text-anchor="middle">40.76.99.227</text>
+      <text x="308" y="180" font-family="JetBrains Mono,monospace" font-size="7" fill="#1e2e44" text-anchor="middle">index=main,suricata,gophish</text>
+      <text x="308" y="192" font-family="JetBrains Mono,monospace" font-size="7" fill="#1e2e44" text-anchor="middle">13 validated detections</text>
+
+      <!-- AZURE CLOUD CENTER VISUAL -->
+      <!-- Cloud blob shape using path -->
+      <!-- Cloud outer glow layer -->
+      <path d="M430,180 Q418,155 438,148 Q442,128 462,132 Q470,112 492,118 Q510,104 528,118 Q548,110 558,128 Q578,124 582,148 Q600,152 596,172 Q604,190 586,196 Q590,214 570,218 Q560,236 538,228 Q524,242 504,232 Q486,244 468,232 Q448,240 438,224 Q418,226 416,206 Q404,196 416,182 Z" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="10"/>
+      <!-- Cloud mid glow -->
+      <path d="M430,180 Q418,155 438,148 Q442,128 462,132 Q470,112 492,118 Q510,104 528,118 Q548,110 558,128 Q578,124 582,148 Q600,152 596,172 Q604,190 586,196 Q590,214 570,218 Q560,236 538,228 Q524,242 504,232 Q486,244 468,232 Q448,240 438,224 Q418,226 416,206 Q404,196 416,182 Z" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="4"/>
+      <!-- Cloud main shape -->
+      <path d="M430,180 Q418,155 438,148 Q442,128 462,132 Q470,112 492,118 Q510,104 528,118 Q548,110 558,128 Q578,124 582,148 Q600,152 596,172 Q604,190 586,196 Q590,214 570,218 Q560,236 538,228 Q524,242 504,232 Q486,244 468,232 Q448,240 438,224 Q418,226 416,206 Q404,196 416,182 Z" fill="#0c1830" stroke="rgba(255,255,255,0.55)" stroke-width="1.5"/>
+      <!-- Cloud label -->
+      <text x="504" y="160" font-family="JetBrains Mono,monospace" font-size="10" fill="rgba(255,255,255,0.85)" text-anchor="middle" font-weight="500">Azure</text>
+      <text x="504" y="173" font-family="JetBrains Mono,monospace" font-size="8" fill="rgba(255,255,255,0.45)" text-anchor="middle">North Europe</text>
+      <!-- NSG box inside cloud -->
+      <rect x="448" y="180" width="112" height="44" rx="3" fill="#0d1828" stroke="#1a3060" stroke-width="1"/>
+      <text x="504" y="196" font-family="JetBrains Mono,monospace" font-size="8" fill="#2060a0" text-anchor="middle" font-weight="500">NSG Firewall</text>
+      <text x="504" y="207" font-family="JetBrains Mono,monospace" font-size="7" fill="#1a3050" text-anchor="middle">RDP · SSH · restricted</text>
+      <text x="504" y="217" font-family="JetBrains Mono,monospace" font-size="7" fill="#1a3050" text-anchor="middle">3333/8080 analyst-only</text>
+
+      <!-- SERVICENOW (external) -->
+      <rect x="630" y="60" width="148" height="90" rx="4" fill="#0e1520" stroke="#1a2240" stroke-width="1" id="box-sn"/>
+      <rect x="630" y="60" width="148" height="3" rx="4" fill="#00ff87" opacity="0.4" id="top-sn"/>
+      <text x="704" y="82" font-family="JetBrains Mono,monospace" font-size="10" fill="#00ff87" text-anchor="middle" font-weight="500">ServiceNow</text>
+      <text x="704" y="96" font-family="JetBrains Mono,monospace" font-size="8" fill="#3a5070" text-anchor="middle">PDI — cloud hosted</text>
+      <text x="704" y="108" font-family="JetBrains Mono,monospace" font-size="8" fill="#2a3a58" text-anchor="middle">dev386008.service-now.com</text>
+      <text x="704" y="120" font-family="JetBrains Mono,monospace" font-size="7" fill="#1e2e44" text-anchor="middle">Incidents · ITSM · Analyst</text>
+      <text x="704" y="132" font-family="JetBrains Mono,monospace" font-size="7" fill="#1e2e44" text-anchor="middle">INC0010660 · INC0013219</text>
+      <text x="704" y="144" font-family="JetBrains Mono,monospace" font-size="7" fill="#1e2e44" text-anchor="middle">Dmack — SOC Analyst Tier 1</text>
+
+      <!-- THREATS -->
+      <rect x="630" y="196" width="148" height="100" rx="4" fill="#100c0c" stroke="#2a1010" stroke-width="1" id="box-threats"/>
+      <rect x="630" y="196" width="148" height="3" rx="4" fill="#ff4a4a" opacity="0.4"/>
+      <text x="704" y="218" font-family="JetBrains Mono,monospace" font-size="10" fill="#ff4a4a" text-anchor="middle" font-weight="500">External Threats</text>
+      <text x="704" y="232" font-family="JetBrains Mono,monospace" font-size="7" fill="#3a1a1a" text-anchor="middle">273 attacker IPs · 38 countries</text>
+      <text x="704" y="244" font-family="JetBrains Mono,monospace" font-size="7" fill="#3a1a1a" text-anchor="middle">RDP Brute Force · SSH Scan</text>
+      <text x="704" y="256" font-family="JetBrains Mono,monospace" font-size="7" fill="#3a1a1a" text-anchor="middle">MySQL/MSSQL/VoIP probe</text>
+      <text x="704" y="268" font-family="JetBrains Mono,monospace" font-size="7" fill="#3a1a1a" text-anchor="middle">Nmap recon · 23 IDS sigs</text>
+      <text x="704" y="280" font-family="JetBrains Mono,monospace" font-size="7" fill="#3a1a1a" text-anchor="middle">Phishing simulation</text>
+
+      <!-- ANALYST -->
+      <rect x="630" y="336" width="148" height="50" rx="4" fill="#0e1520" stroke="#1a2240" stroke-width="1"/>
+      <text x="704" y="357" font-family="JetBrains Mono,monospace" font-size="10" fill="#e8f0ff" text-anchor="middle" font-weight="500">SOC Analyst</text>
+      <text x="704" y="371" font-family="JetBrains Mono,monospace" font-size="8" fill="#3a5070" text-anchor="middle">Demond Mack — Tier 1</text>
+      <text x="704" y="381" font-family="JetBrains Mono,monospace" font-size="7" fill="#2a3a50" text-anchor="middle">Alert triage · Investigation · Closure</text>
+
+      <!-- STATIC CONNECTIONS routing through Azure cloud -->
+      <line x1="192" y1="116" x2="446" y2="192" stroke="#1a2a3a" stroke-width="1" id="line-dc-splunk"/>
+      <line x1="192" y1="244" x2="446" y2="206" stroke="#1a2a3a" stroke-width="1" id="line-client-splunk"/>
+      <line x1="560" y1="192" x2="628" y2="105" stroke="#1a2a3a" stroke-width="1" id="line-splunk-sn"/>
+      <line x1="628" y1="240" x2="560" y2="206" stroke="#1a2a3a" stroke-width="1" id="line-threats-client"/>
+      <line x1="560" y1="200" x2="628" y2="360" stroke="#1a2a3a" stroke-width="1"/>
+      <line x1="704" y1="152" x2="704" y2="194" stroke="#1a2a3a" stroke-width="1"/>
+
+      <!-- HIGHLIGHT PATHS routing through cloud -->
+      <line x1="192" y1="116" x2="446" y2="192" stroke="#00d4ff" stroke-width="2" id="hl-dc-splunk" style="display:none"/>
+      <line x1="560" y1="192" x2="628" y2="105" stroke="#00d4ff" stroke-width="2" id="hl-splunk-sn-p1" style="display:none"/>
+      <line x1="192" y1="244" x2="446" y2="206" stroke="#ffaa00" stroke-width="2" id="hl-client-splunk" style="display:none"/>
+      <line x1="560" y1="192" x2="628" y2="105" stroke="#ffaa00" stroke-width="2" id="hl-splunk-sn-p2" style="display:none"/>
+      <line x1="192" y1="260" x2="446" y2="210" stroke="#00ff87" stroke-width="2" id="hl-gophish-splunk" style="display:none"/>
+      <line x1="560" y1="196" x2="628" y2="108" stroke="#00ff87" stroke-width="2" id="hl-splunk-sn-p3" style="display:none"/>
+      <line x1="628" y1="240" x2="560" y2="206" stroke="#ff4a4a" stroke-width="2" id="hl-threats" style="display:none"/>
+
+      <!-- LEGEND -->
+      <line x1="26" y1="415" x2="56" y2="415" stroke="#00d4ff" stroke-width="1.5"/>
+      <text x="60" y="418" font-family="JetBrains Mono,monospace" font-size="7" fill="#2a3a50">Pipeline 01 — Endpoint</text>
+      <line x1="190" y1="415" x2="220" y2="415" stroke="#ffaa00" stroke-width="1.5"/>
+      <text x="224" y="418" font-family="JetBrains Mono,monospace" font-size="7" fill="#2a3a50">Pipeline 02 — IDS</text>
+      <line x1="330" y1="415" x2="360" y2="415" stroke="#00ff87" stroke-width="1.5"/>
+      <text x="364" y="418" font-family="JetBrains Mono,monospace" font-size="7" fill="#2a3a50">Pipeline 03 — Phishing</text>
+      <line x1="480" y1="415" x2="510" y2="415" stroke="#ff4a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="514" y="418" font-family="JetBrains Mono,monospace" font-size="7" fill="#2a3a50">External attack traffic</text>
+    </svg>
+  </div>
+</div>
+
+<section id="environment" style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="sec-inner">
+    <div class="sec-eye reveal">Infrastructure</div>
+    <div class="sec-title reveal">Enterprise SOC Environment</div>
+    <div class="sec-sub reveal">Three fully integrated detection pipelines on Azure. Click the diagram icon on any pipeline to see exactly where it flows through the environment.</div>
+
+    <div class="pipe-block reveal">
+      <div class="pipe-title">Pipeline 01 — Endpoint</div>
+      <div class="pipe-row">
+        <div class="pipe-flow">
+          <div class="pipe-step">Windows Events</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step hi">Sysmon</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step">UF Agent</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step hi">Splunk</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step">Alert fires</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step hi">ServiceNow</div>
+        </div>
+        <div>
+          <div class="diag-thumb" onclick="showDiag('p1')" title="View in environment diagram">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="4" width="10" height="7" rx="1" stroke="#00d4ff" stroke-width="1.2"/>
+              <rect x="20" y="4" width="10" height="7" rx="1" stroke="#00d4ff" stroke-width="1.2"/>
+              <rect x="11" y="20" width="10" height="7" rx="1" stroke="#00ff87" stroke-width="1.2"/>
+              <line x1="12" y1="7.5" x2="20" y2="7.5" stroke="#00d4ff" stroke-width="1"/>
+              <line x1="25" y1="11" x2="16" y2="20" stroke="#00d4ff" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="diag-thumb-label">diagram</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipe-block reveal">
+      <div class="pipe-title">Pipeline 02 — Network IDS</div>
+      <div class="pipe-row">
+        <div class="pipe-flow">
+          <div class="pipe-step">Network Traffic</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step hi">Suricata IDS</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step">eve.json</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step hi">Splunk</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step">Alert fires</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step hi">ServiceNow</div>
+        </div>
+        <div>
+          <div class="diag-thumb" onclick="showDiag('p2')" title="View in environment diagram">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="4" width="10" height="7" rx="1" stroke="#ffaa00" stroke-width="1.2"/>
+              <rect x="20" y="4" width="10" height="7" rx="1" stroke="#ffaa00" stroke-width="1.2"/>
+              <rect x="11" y="20" width="10" height="7" rx="1" stroke="#00ff87" stroke-width="1.2"/>
+              <line x1="12" y1="7.5" x2="20" y2="7.5" stroke="#ffaa00" stroke-width="1"/>
+              <line x1="25" y1="11" x2="16" y2="20" stroke="#ffaa00" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="diag-thumb-label">diagram</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipe-block reveal">
+      <div class="pipe-title">Pipeline 03 — Phishing</div>
+      <div class="pipe-row">
+        <div class="pipe-flow">
+          <div class="pipe-step">GoPhish</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step hi">Papercut SMTP</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step">gophish.log</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step hi">Splunk</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step">Alert fires</div><div class="pipe-arrow">→</div>
+          <div class="pipe-step hi">ServiceNow</div>
+        </div>
+        <div>
+          <div class="diag-thumb" onclick="showDiag('p3')" title="View in environment diagram">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="4" width="10" height="7" rx="1" stroke="#00ff87" stroke-width="1.2"/>
+              <rect x="20" y="4" width="10" height="7" rx="1" stroke="#00ff87" stroke-width="1.2"/>
+              <rect x="11" y="20" width="10" height="7" rx="1" stroke="#00ff87" stroke-width="1.2"/>
+              <line x1="12" y1="7.5" x2="20" y2="7.5" stroke="#00ff87" stroke-width="1"/>
+              <line x1="25" y1="11" x2="16" y2="20" stroke="#00ff87" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="diag-thumb-label">diagram</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack-grid reveal">
+      <div class="stack-item"><div class="si-icon">SP</div><div><div class="si-name">Splunk Enterprise</div><div class="si-role">SIEM</div></div></div>
+      <div class="stack-item"><div class="si-icon">SN</div><div><div class="si-name">ServiceNow</div><div class="si-role">ITSM / Ticketing</div></div></div>
+      <div class="stack-item"><div class="si-icon">SU</div><div><div class="si-name">Suricata IDS</div><div class="si-role">Network Detection</div></div></div>
+      <div class="stack-item"><div class="si-icon">AZ</div><div><div class="si-name">Azure Cloud</div><div class="si-role">Infrastructure</div></div></div>
+      <div class="stack-item"><div class="si-icon">AD</div><div><div class="si-name">Active Directory</div><div class="si-role">Domain Controller</div></div></div>
+      <div class="stack-item"><div class="si-icon">SY</div><div><div class="si-name">Sysmon</div><div class="si-role">Endpoint Telemetry</div></div></div>
+      <div class="stack-item"><div class="si-icon">GP</div><div><div class="si-name">GoPhish</div><div class="si-role">Phishing Simulation</div></div></div>
+      <div class="stack-item"><div class="si-icon">AT</div><div><div class="si-name">Atomic Red Team</div><div class="si-role">Attack Simulation</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="investigations">
+  <div class="sec-inner">
+    <div class="sec-eye reveal">Case Studies</div>
+    <div class="sec-title reveal">SOC Investigations</div>
+    <div class="sec-sub reveal">Three documented investigations using real external attack telemetry — structured analyst workflow from alert receipt to ticket closure. Click any finding to expand the exact analyst action taken.</div>
+    <div class="case-list">
+
+      <!-- CASE 1 -->
+      <div class="case-card reveal" id="c1">
+        <div class="case-head" onclick="toggleCase('c1')">
+          <div style="flex:1">
+            <div class="case-tag">Case Study 01 — Endpoint / Network</div>
+            <div class="case-title">External RDP Brute Force Campaign</div>
+            <div class="badges">
+              <span class="badge b-red">INC0010660</span>
+              <span class="badge b-red">Priority 1 Critical</span>
+              <span class="badge b-amber">T1110.001</span>
+              <span class="badge b-green">Resolved</span>
+              <span class="badge b-cyan">Real Attack Telemetry</span>
+            </div>
+          </div>
+          <span class="case-chevron">▼</span>
+        </div>
+        <div class="case-body">
+          <div class="tab-bar">
+            <button class="tb on" onclick="switchTab(event,'c1','exec')">Executive Summary</button>
+            <button class="tb" onclick="switchTab(event,'c1','tech')">Technical Deep Dive</button>
+            <button class="tb" onclick="switchTab(event,'c1','breach')">If Breach Confirmed</button>
+            <button class="tb" onclick="switchTab(event,'c1','ev')">Evidence</button>
+          </div>
+          <div class="tab-content">
+            <div class="tp on" id="c1-exec">
+              <div class="stats-row">
+                <div class="sbox"><div class="sbox-num">273</div><div class="sbox-lab">Unique IPs</div></div>
+                <div class="sbox"><div class="sbox-num">14,661</div><div class="sbox-lab">Attempts</div></div>
+                <div class="sbox"><div class="sbox-num">38</div><div class="sbox-lab">Countries</div></div>
+                <div class="sbox"><div class="sbox-num">10</div><div class="sbox-lab">Days active</div></div>
+                <div class="sbox g"><div class="sbox-num">0</div><div class="sbox-lab">Breaches</div></div>
+              </div>
+              <p class="body-text">Real external attackers discovered the Azure lab environment's RDP port exposed to the internet and launched a sustained distributed brute force campaign targeting the Administrator account. 273 unique IPs across 38 countries generated 14,661 failed authentication attempts over 10 days.</p>
+              <p class="body-text">Root cause: Azure NSG rule permitted inbound RDP from 0.0.0.0/0. Upon detection the NSG was restricted to authorized IPs — attack traffic dropped to zero immediately and verifiably.</p>
+              <div class="find-tag">ANALYST FINDING</div>
+              <p class="body-text">No successful unauthorized logons confirmed across the entire 10-day attack window. Incident closed at Tier 1.</p>
+            </div>
+            <div class="tp" id="c1-tech">
+              <div class="sh">Primary Detection Query</div>
+              <div class="code-block">index=* source="XmlWinEventLog:Security" EventCode=4625 LogonType=3
+| where IpAddress!="10.0.0.5" AND IpAddress!="::1" AND IpAddress!="-"
+| stats dc(IpAddress) as UniqueAttackerIPs, sum(count) as TotalAttempts</div>
+              <div class="sh">Attack Tooling Identified — click each finding to expand analyst action</div>
+              <div class="fitem" id="fi-c1-1">
+                <div class="fitem-head" onclick="toggleFitem('fi-c1-1')"><span class="fitem-arrow">▶</span><span class="fitem-text">FreeRDP and Rdesktop workstation names confirm Linux-based automated attack tooling</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// Splunk — identify workstation names used by attackers</div>
+                  <div class="fitem-cmd">index=* EventCode=4625 LogonType=3
+| stats count by WorkstationName
+| sort - count
+// Result: FreeRDP, Rdesktop, kali — Linux attack tools confirmed</div>
+                </div>
+              </div>
+              <div class="fitem" id="fi-c1-2">
+                <div class="fitem-head" onclick="toggleFitem('fi-c1-2')"><span class="fitem-arrow">▶</span><span class="fitem-text">Generic "workstation" name in 87% of attempts — mass-automated credential stuffing</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// Splunk — calculate percentage of generic workstation names</div>
+                  <div class="fitem-cmd">index=* EventCode=4625 LogonType=3
+| eval generic=if(WorkstationName="workstation" OR WorkstationName="-","yes","no")
+| stats count by generic
+| eventstats sum(count) as total
+| eval pct=round(count/total*100,1)</div>
+                </div>
+              </div>
+              <div class="fitem" id="fi-c1-3">
+                <div class="fitem-head" onclick="toggleFitem('fi-c1-3')"><span class="fitem-arrow">▶</span><span class="fitem-text">273 IPs across 38 countries — botnet-driven distributed campaign confirmed</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// Splunk — GeoIP enrichment to confirm geographic distribution</div>
+                  <div class="fitem-cmd">index=* EventCode=4625 LogonType=3
+| iplocation IpAddress
+| stats dc(IpAddress) as UniqueIPs by Country
+| sort - UniqueIPs</div>
+                </div>
+              </div>
+              <div class="fitem" id="fi-c1-4">
+                <div class="fitem-head" onclick="toggleFitem('fi-c1-4')"><span class="fitem-arrow">▶</span><span class="fitem-text">NTLM authentication via NtLmSsp — Logon Type 3 network logons confirmed</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// Splunk — confirm authentication package</div>
+                  <div class="fitem-cmd">index=* EventCode=4625 LogonType=3
+| stats count by AuthenticationPackageName, LogonProcessName
+| sort - count
+// Result: AuthPackage=NTLM, LogonProcess=NtLmSsp</div>
+                </div>
+              </div>
+              <div class="sh">Top Attacker Threat Intel</div>
+              <div class="stats-row" style="grid-template-columns:1fr 1fr 1fr">
+                <div class="sbox"><div class="sbox-num" style="font-size:1rem;color:var(--text)">123.30.106.163</div><div class="sbox-lab">Top — 422 attempts</div></div>
+                <div class="sbox"><div class="sbox-num">6/91</div><div class="sbox-lab">VirusTotal vendors</div></div>
+                <div class="sbox"><div class="sbox-num">194</div><div class="sbox-lab">AbuseIPDB reports</div></div>
+              </div>
+              <div class="sh">MITRE ATT&amp;CK</div>
+              <table class="mtable">
+                <thead><tr><th>ID</th><th>Technique</th><th>Evidence</th></tr></thead>
+                <tbody>
+                  <tr><td>T1110.001</td><td>Brute Force: Password Guessing</td><td>14,661 failed logon attempts against Administrator</td></tr>
+                  <tr><td>T1133</td><td>External Remote Services</td><td>RDP port 3389 targeted as primary access vector</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="tp" id="c1-breach">
+              <p class="body-text">No breach occurred. The following documents what would have triggered escalation and the exact response actions.</p>
+              <div class="sh">IOCs That Would Have Indicated Compromise</div>
+              <div class="ioc-box">
+                <div class="ioc-item">▶ Event ID 4624 from unknown external IP after brute force activity</div>
+                <div class="ioc-item">▶ Logon Type 10 (RemoteInteractive) from attacker IP — RDP access gained</div>
+                <div class="ioc-item">▶ New process spawned under Administrator from external session</div>
+                <div class="ioc-item">▶ Lateral movement — logon from compromised host to Domain Controller</div>
+                <div class="ioc-item">▶ New scheduled task or service — persistence mechanism established</div>
+              </div>
+              <div class="sh">Response Actions</div>
+              <div class="fitem" id="fi-c1-b1">
+                <div class="fitem-head" onclick="toggleFitem('fi-c1-b1')"><span class="fitem-arrow">▶</span><span class="fitem-text"><strong style="color:var(--amber)">Step 1:</strong> Isolate host — restrict Azure NSG to block all traffic immediately</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// PowerShell — add deny-all inbound rule to NSG</div>
+                  <div class="fitem-cmd">$nsg = Get-AzNetworkSecurityGroup -Name "WIN-SERVER-CLIENT-nsg" -ResourceGroupName "SUFFice_group"
+$rule = New-AzNetworkSecurityRuleConfig -Name "DenyAllInbound" -Priority 100 `
+  -Direction Inbound -Access Deny -Protocol * `
+  -SourceAddressPrefix * -DestinationAddressPrefix * `
+  -SourcePortRange * -DestinationPortRange *
+$nsg.SecurityRules.Add($rule)
+Set-AzNetworkSecurityGroup -NetworkSecurityGroup $nsg</div>
+                </div>
+              </div>
+              <div class="fitem" id="fi-c1-b2">
+                <div class="fitem-head" onclick="toggleFitem('fi-c1-b2')"><span class="fitem-arrow">▶</span><span class="fitem-text"><strong style="color:var(--amber)">Step 2:</strong> Disable compromised account in Active Directory</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// PowerShell — disable account and force logoff</div>
+                  <div class="fitem-cmd">Disable-ADAccount -Identity "Administrator"
+Set-ADUser -Identity "Administrator" -LockedOut $true
+query session /server:WIN-SERVER-CLIE
+logoff [sessionID] /server:WIN-SERVER-CLIE</div>
+                </div>
+              </div>
+              <div class="fitem" id="fi-c1-b3">
+                <div class="fitem-head" onclick="toggleFitem('fi-c1-b3')"><span class="fitem-arrow">▶</span><span class="fitem-text"><strong style="color:var(--amber)">Step 3:</strong> Check for lateral movement to Domain Controller</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// Splunk — confirm if compromised host authenticated to DC</div>
+                  <div class="fitem-cmd">index=* source="XmlWinEventLog:Security" EventCode=4624 LogonType=3
+| where WorkstationName="WIN-SERVER-CLIE" AND ComputerName="SUFFice"
+| table _time TargetUserName IpAddress LogonType ComputerName
+| sort _time</div>
+                </div>
+              </div>
+            </div>
+            <div class="tp" id="c1-ev">
+              <p class="body-text" style="margin-bottom:16px;">Evidence collected during investigation — replace placeholder slots with actual screenshots.</p>
+              <div class="ev-grid">
+                <div class="ev-slot"><div class="ev-img-placeholder">🎫</div><div class="ev-caption"><div class="ev-caption-title">ServiceNow INC0010660</div><div class="ev-caption-sub">Priority 1 Critical — Assigned to Demond Mack</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">📊</div><div class="ev-caption"><div class="ev-caption-title">Splunk — 273 Unique IPs</div><div class="ev-caption-sub">UniqueAttackerIPs=273, TotalAttempts=14,661</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">🌍</div><div class="ev-caption"><div class="ev-caption-title">GeoIP Breakdown</div><div class="ev-caption-sub">38 countries — Vietnam, US, Germany top sources</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">📈</div><div class="ev-caption"><div class="ev-caption-title">Attack Timeline</div><div class="ev-caption-sub">May 22 to June 1 — drops to zero post-remediation</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">🔍</div><div class="ev-caption"><div class="ev-caption-title">VirusTotal — 6/91 Vendors</div><div class="ev-caption-sub">123.30.106.163 — VNPT Corp Vietnam</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">⚠️</div><div class="ev-caption"><div class="ev-caption-title">AbuseIPDB — 194 Reports</div><div class="ev-caption-sub">Active RDP brute force confirmed</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">🔥</div><div class="ev-caption"><div class="ev-caption-title">Azure NSG — Before</div><div class="ev-caption-sub">Port 3389 open to 0.0.0.0/0</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">✅</div><div class="ev-caption"><div class="ev-caption-title">Azure NSG — After</div><div class="ev-caption-sub">Restricted to authorized IPs only</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASE 2 -->
+      <div class="case-card reveal" id="c2">
+        <div class="case-head" onclick="toggleCase('c2')">
+          <div style="flex:1">
+            <div class="case-tag">Case Study 02 — Network IDS</div>
+            <div class="case-title">Multi-Vector External Attack Campaign</div>
+            <div class="badges">
+              <span class="badge b-red">INC0013219</span>
+              <span class="badge b-red">Priority 1 Critical</span>
+              <span class="badge b-amber">T1595 · T1046 · T1110.001</span>
+              <span class="badge b-green">Resolved</span>
+              <span class="badge b-cyan">23 Suricata Signatures</span>
+            </div>
+          </div>
+          <span class="case-chevron">▼</span>
+        </div>
+        <div class="case-body">
+          <div class="tab-bar">
+            <button class="tb on" onclick="switchTab(event,'c2','exec')">Executive Summary</button>
+            <button class="tb" onclick="switchTab(event,'c2','tech')">Technical Deep Dive</button>
+            <button class="tb" onclick="switchTab(event,'c2','breach')">If Breach Confirmed</button>
+            <button class="tb" onclick="switchTab(event,'c2','ev')">Evidence</button>
+          </div>
+          <div class="tab-content">
+            <div class="tp on" id="c2-exec">
+              <div class="stats-row">
+                <div class="sbox"><div class="sbox-num">2,327</div><div class="sbox-lab">IDS Alerts</div></div>
+                <div class="sbox"><div class="sbox-num">233</div><div class="sbox-lab">Unique IPs</div></div>
+                <div class="sbox"><div class="sbox-num">23</div><div class="sbox-lab">Signatures</div></div>
+                <div class="sbox"><div class="sbox-num">15,422</div><div class="sbox-lab">AbuseIPDB Reports</div></div>
+                <div class="sbox g"><div class="sbox-num">0</div><div class="sbox-lab">Breaches</div></div>
+              </div>
+              <p class="body-text">Suricata IDS detected a comprehensive multi-vector attack — RDP brute force, SSH scanning, MySQL, PostgreSQL, MSSQL, VoIP/SIP, SNMP, and active Nmap reconnaissance all firing simultaneously. 23 distinct signatures revealed a fully automated framework probing every available service.</p>
+              <p class="body-text">Primary attacker 194.165.16.167 hosted on Flyservers S.A. (AS48721) — documented bulletproof hosting in Lithuania. 15,422 AbuseIPDB reports at 100% confidence. Same IP confirmed actively attacking other organizations during the investigation window.</p>
+              <div class="find-tag">ANALYST FINDING</div>
+              <p class="body-text">No lateral movement, no breach, no malicious execution detected across all 6 alert categories.</p>
+            </div>
+            <div class="tp" id="c2-tech">
+              <div class="sh">Top Signatures by Volume</div>
+              <table class="mtable">
+                <thead><tr><th>Signature</th><th>Count</th><th>Category</th></tr></thead>
+                <tbody>
+                  <tr><td>ET INFO RDP Response To External</td><td>1,385</td><td>Misc Activity</td></tr>
+                  <tr><td>ET POLICY MS RDP Admin Login</td><td>662</td><td>Protocol Decode</td></tr>
+                  <tr><td>ET DROP Dshield Block Listed</td><td>209</td><td>Misc Attack</td></tr>
+                  <tr><td>ET SCAN Potential SSH Scan</td><td>6</td><td>Network Scan</td></tr>
+                  <tr><td>ET SCAN RDP Connection from Nmap</td><td>1</td><td>Network Scan</td></tr>
+                </tbody>
+              </table>
+              <div class="sh">Investigation Findings — click to expand analyst actions</div>
+              <div class="fitem" id="fi-c2-1">
+                <div class="fitem-head" onclick="toggleFitem('fi-c2-1')"><span class="fitem-arrow">▶</span><span class="fitem-text">194.165.16.167 confirmed on Flyservers S.A. bulletproof hosting — Vilnius, Lithuania</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// Splunk — isolate top attacker and pull all associated signatures</div>
+                  <div class="fitem-cmd">index=suricata src_ip="194.165.16.167"
+| stats count by alert.signature, alert.category
+| sort - count
+// Cross-reference: VirusTotal 12/91, AbuseIPDB 15,422 reports 100% confidence</div>
+                </div>
+              </div>
+              <div class="fitem" id="fi-c2-2">
+                <div class="fitem-head" onclick="toggleFitem('fi-c2-2')"><span class="fitem-arrow">▶</span><span class="fitem-text">Multi-service scanning confirmed — SSH, MySQL, MSSQL, VoIP, SNMP all probed simultaneously</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// Splunk — map destination ports to identify full attack surface</div>
+                  <div class="fitem-cmd">index=suricata
+| eval service=case(dest_port=22,"SSH",dest_port=3306,"MySQL",
+    dest_port=1433,"MSSQL",dest_port=5060,"VoIP/SIP",
+    dest_port=161,"SNMP",dest_port=3389,"RDP",true(),"Other")
+| stats count by service, alert.category
+| sort - count</div>
+                </div>
+              </div>
+              <div class="fitem" id="fi-c2-3">
+                <div class="fitem-head" onclick="toggleFitem('fi-c2-3')"><span class="fitem-arrow">▶</span><span class="fitem-text">ET DROP Dshield Block Listed Source — 209 hits — known malicious infrastructure confirmed</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// Splunk — extract all Dshield-listed IPs</div>
+                  <div class="fitem-cmd">index=suricata alert.signature="ET DROP Dshield*"
+| stats dc(src_ip) as unique_ips, count by src_ip
+| sort - count
+| head 10</div>
+                </div>
+              </div>
+              <div class="sh">MITRE ATT&amp;CK</div>
+              <table class="mtable">
+                <thead><tr><th>ID</th><th>Technique</th><th>Evidence</th></tr></thead>
+                <tbody>
+                  <tr><td>T1595</td><td>Active Scanning</td><td>Nmap sig — multi-port across 8+ services</td></tr>
+                  <tr><td>T1046</td><td>Network Service Discovery</td><td>SSH, MySQL, MSSQL, VoIP, SNMP probed simultaneously</td></tr>
+                  <tr><td>T1110.001</td><td>Brute Force</td><td>662 RDP Administrator login signatures</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="tp" id="c2-breach">
+              <p class="body-text">No breach occurred. The following shows what compromise indicators would have looked like and the exact response.</p>
+              <div class="sh">IOCs That Would Have Indicated Compromise</div>
+              <div class="ioc-box">
+                <div class="ioc-item">▶ Successful logon Event ID 4624 from any of the 233 attacker IPs</div>
+                <div class="ioc-item">▶ Suricata C2 traffic signature firing post initial access</div>
+                <div class="ioc-item">▶ Outbound connection from Windows Client to attacker IP on non-standard port</div>
+                <div class="ioc-item">▶ ET COMPROMISED signature on internal east-west traffic</div>
+              </div>
+              <div class="sh">Response Actions</div>
+              <div class="fitem" id="fi-c2-b1">
+                <div class="fitem-head" onclick="toggleFitem('fi-c2-b1')"><span class="fitem-arrow">▶</span><span class="fitem-text"><strong style="color:var(--amber)">Step 1:</strong> Block attacker IPs at NSG and verify no active sessions</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// Splunk — confirm no successful auth from attacker IPs before blocking</div>
+                  <div class="fitem-cmd">index=* EventCode=4624
+| where match(IpAddress,"194\.165\.16\.167|123\.30\.106")
+| table _time TargetUserName IpAddress LogonType</div>
+                </div>
+              </div>
+              <div class="fitem" id="fi-c2-b2">
+                <div class="fitem-head" onclick="toggleFitem('fi-c2-b2')"><span class="fitem-arrow">▶</span><span class="fitem-text"><strong style="color:var(--amber)">Step 2:</strong> If C2 traffic detected — capture network traffic for forensics</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// PowerShell — start packet capture on compromised host</div>
+                  <div class="fitem-cmd">netsh trace start capture=yes tracefile=C:\evidence\capture.etl maxsize=500
+# Run for 5 minutes then stop
+netsh trace stop</div>
+                </div>
+              </div>
+            </div>
+            <div class="tp" id="c2-ev">
+              <p class="body-text" style="margin-bottom:16px;">Evidence collected — Suricata alerts, threat intelligence, ServiceNow ticket.</p>
+              <div class="ev-grid">
+                <div class="ev-slot"><div class="ev-img-placeholder">🎫</div><div class="ev-caption"><div class="ev-caption-title">ServiceNow INC0013219</div><div class="ev-caption-sub">Priority 1 Critical — In Progress</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">📊</div><div class="ev-caption"><div class="ev-caption-title">Splunk — 23 Signatures</div><div class="ev-caption-sub">2,327 alerts across 23 distinct signatures</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">📈</div><div class="ev-caption"><div class="ev-caption-title">Attack Timeline</div><div class="ev-caption-sub">Peak 1,000+ alerts/hr — zero after NSG</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">🔍</div><div class="ev-caption"><div class="ev-caption-title">VirusTotal — 12/91</div><div class="ev-caption-sub">Flyservers bulletproof hosting confirmed</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">⚠️</div><div class="ev-caption"><div class="ev-caption-title">AbuseIPDB — 100%</div><div class="ev-caption-sub">15,422 reports — attacking multiple orgs</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">✅</div><div class="ev-caption"><div class="ev-caption-title">No Lateral Movement</div><div class="ev-caption-sub">0 results — attackers never authenticated</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASE 3 -->
+      <div class="case-card reveal" id="c3">
+        <div class="case-head" onclick="toggleCase('c3')">
+          <div style="flex:1">
+            <div class="case-tag">Case Study 03 — Phishing / Credential Harvesting</div>
+            <div class="case-title">Microsoft 365 Credential Phishing Campaign</div>
+            <div class="badges">
+              <span class="badge b-red">Priority 1 Critical</span>
+              <span class="badge b-amber">T1566.001 · T1078 · T1056.003</span>
+              <span class="badge b-green">Resolved</span>
+              <span class="badge b-cyan">Credentials Captured</span>
+            </div>
+          </div>
+          <span class="case-chevron">▼</span>
+        </div>
+        <div class="case-body">
+          <div class="tab-bar">
+            <button class="tb on" onclick="switchTab(event,'c3','exec')">Executive Summary</button>
+            <button class="tb" onclick="switchTab(event,'c3','tech')">Technical Deep Dive</button>
+            <button class="tb" onclick="switchTab(event,'c3','breach')">If Breach Confirmed</button>
+            <button class="tb" onclick="switchTab(event,'c3','ev')">Evidence</button>
+          </div>
+          <div class="tab-content">
+            <div class="tp on" id="c3-exec">
+              <div class="stats-row">
+                <div class="sbox"><div class="sbox-num">55s</div><div class="sbox-lab">Time to click</div></div>
+                <div class="sbox"><div class="sbox-num">&lt;3m</div><div class="sbox-lab">Time to submit</div></div>
+                <div class="sbox"><div class="sbox-num">100%</div><div class="sbox-lab">Capture rate</div></div>
+                <div class="sbox"><div class="sbox-num">8</div><div class="sbox-lab">Investigation phases</div></div>
+                <div class="sbox g"><div class="sbox-num">0</div><div class="sbox-lab">Unauthorized access</div></div>
+              </div>
+              <p class="body-text">A simulated phishing campaign delivered a convincing Microsoft 365 password expiry notification to an internal user. The spoofed sender and urgency messaging caused the target to click within 55 seconds and submit credentials within 3 minutes — a textbook demonstration of how social engineering bypasses technical controls.</p>
+              <p class="body-text">GoPhish captured the full credentials in cleartext. An 8-phase post-compromise investigation confirmed no unauthorized credential use, no lateral movement, no malicious process execution, and no data exfiltration.</p>
+              <div class="find-tag">ANALYST FINDING</div>
+              <p class="body-text">Credential theft confirmed. No post-compromise activity detected. Critical gap identified: absence of MFA means stolen credentials would allow immediate account takeover with no additional barriers.</p>
+            </div>
+            <div class="tp" id="c3-tech">
+              <div class="sh">Attack Chain Timeline</div>
+              <div class="tl">
+                <div class="tl-item"><div class="tl-dot" style="background:#3a7bd5"></div><div class="tl-body"><div class="tl-time">June 6, 2026 — 8:36:30 PM</div><div class="tl-title">Phishing email delivered</div><div class="tl-detail">Sent from it-support@suffice.local — "Action Required: Your Microsoft 365 Password Expires Today" — via Papercut SMTP to demondmack1976@suffice.local</div></div></div>
+                <div class="tl-item"><div class="tl-dot" style="background:#ffaa00"></div><div class="tl-body"><div class="tl-time">8:37:25 PM — 55 seconds later</div><div class="tl-title">Phishing link clicked</div><div class="tl-detail">Target visited http://10.0.0.5/?rid=EzTGqOq — fake M365 login page rendered — Windows 10 / Chrome 149.0.0.0</div></div></div>
+                <div class="tl-item"><div class="tl-dot" style="background:#ff4a4a"></div><div class="tl-body"><div class="tl-time">8:39:05 PM — 1m 40s after clicking</div><div class="tl-title">Credentials submitted and captured</div><div class="tl-detail">Username: demondmack1976@suffice.local — Password captured in cleartext — victim redirected to microsoft.com, unaware of compromise</div></div></div>
+                <div class="tl-item"><div class="tl-dot" style="background:#00ff87"></div><div class="tl-body"><div class="tl-time">Post-compromise — 8 investigation phases</div><div class="tl-title">No breach confirmed across all phases</div><div class="tl-detail">Credential use, process execution, lateral movement, file downloads, network connections — all verified clean. Resolved Tier 1.</div></div></div>
+              </div>
+              <div class="sh">Investigation Findings — click to expand analyst actions</div>
+              <div class="fitem" id="fi-c3-1">
+                <div class="fitem-head" onclick="toggleFitem('fi-c3-1')"><span class="fitem-arrow">▶</span><span class="fitem-text">Verified harvested credentials were not used by unauthorized parties</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// Splunk — all logons for demondmack1976 after phishing timestamp</div>
+                  <div class="fitem-cmd">index=* source="XmlWinEventLog:Security" EventCode=4624
+| where TargetUserName="demondmack1976"
+| where _time > strptime("2026-06-06 20:36:30","%Y-%m-%d %H:%M:%S")
+| table _time TargetUserName IpAddress LogonType WorkstationName
+// Result: Only known analyst IPs 96.89.65.77 and 76.17.8.33 — clean</div>
+                </div>
+              </div>
+              <div class="fitem" id="fi-c3-2">
+                <div class="fitem-head" onclick="toggleFitem('fi-c3-2')"><span class="fitem-arrow">▶</span><span class="fitem-text">No suspicious process execution under targeted account — 0 results confirmed</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// Splunk — any processes spawned under demondmack1976</div>
+                  <div class="fitem-cmd">index=* source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+| where User="SUFFICE\\demondmack1976"
+| table _time User Image CommandLine ParentImage
+// Result: 0 events — no process execution under this account</div>
+                </div>
+              </div>
+              <div class="fitem" id="fi-c3-3">
+                <div class="fitem-head" onclick="toggleFitem('fi-c3-3')"><span class="fitem-arrow">▶</span><span class="fitem-text">No lateral movement — all network logons verified as analyst sessions</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// Splunk — network logons using harvested account credentials</div>
+                  <div class="fitem-cmd">index=* source="XmlWinEventLog:Security" EventCode=4624 LogonType=3
+| where TargetUserName="demondmack1976"
+| table _time TargetUserName IpAddress WorkstationName
+// Result: IPs 96.89.65.77 and 76.17.8.33 only — both verified analyst IPs</div>
+                </div>
+              </div>
+              <div class="sh">MITRE ATT&amp;CK</div>
+              <table class="mtable">
+                <thead><tr><th>ID</th><th>Technique</th><th>Evidence</th></tr></thead>
+                <tbody>
+                  <tr><td>T1566.001</td><td>Spearphishing Link</td><td>Email with malicious link to credential harvesting page</td></tr>
+                  <tr><td>T1078</td><td>Valid Accounts</td><td>Legitimate internal credentials captured in cleartext</td></tr>
+                  <tr><td>T1056.003</td><td>Web Portal Capture</td><td>Fake M365 login page captured submitted credentials</td></tr>
+                  <tr><td>T1204.001</td><td>User Execution: Malicious Link</td><td>Target clicked 55 seconds after delivery</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="tp" id="c3-breach">
+              <p class="body-text">Credentials harvested but never used maliciously. Each phase shows what real compromise would have looked like and the exact response.</p>
+              <div class="sh">Phase 4 — If Credentials Were Used</div>
+              <div class="ioc-box">
+                <div class="ioc-item">▶ Event ID 4624 from unknown external IP using demondmack1976 credentials</div>
+                <div class="ioc-item">▶ Logon from foreign geographic location or at unusual hours</div>
+                <div class="ioc-item">▶ Multiple rapid logons from different countries — impossible travel</div>
+              </div>
+              <div class="fitem" id="fi-c3-b1">
+                <div class="fitem-head" onclick="toggleFitem('fi-c3-b1')"><span class="fitem-arrow">▶</span><span class="fitem-text"><strong style="color:var(--amber)">Response:</strong> Disable account, force password reset, preserve logs, escalate</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// PowerShell — disable account and reset password immediately</div>
+                  <div class="fitem-cmd">Disable-ADAccount -Identity "demondmack1976"
+Set-ADAccountPassword -Identity "demondmack1976" `
+  -NewPassword (ConvertTo-SecureString "TempP@ss2026!" -AsPlainText -Force) -Reset
+Set-ADUser -Identity "demondmack1976" -ChangePasswordAtLogon $true</div>
+                </div>
+              </div>
+              <div class="sh" style="margin-top:16px">Phase 5 — If Malicious Process Executed</div>
+              <div class="ioc-box">
+                <div class="ioc-item">▶ chrome.exe spawning powershell.exe — browser-to-shell execution</div>
+                <div class="ioc-item">▶ CommandLine containing -EncodedCommand or Invoke-WebRequest</div>
+                <div class="ioc-item">▶ Process path in AppData\Local\Temp\ or Downloads\</div>
+              </div>
+              <div class="fitem" id="fi-c3-b2">
+                <div class="fitem-head" onclick="toggleFitem('fi-c3-b2')"><span class="fitem-arrow">▶</span><span class="fitem-text"><strong style="color:var(--amber)">Response:</strong> Decode encoded command, hash file, isolate host</span></div>
+                <div class="fitem-body">
+                  <div class="fitem-cmd-label">// PowerShell — decode base64 encoded command</div>
+                  <div class="fitem-cmd">[System.Text.Encoding]::UTF8.GetString(
+  [System.Convert]::FromBase64String("ENCODED_STRING_HERE")
+)
+# Hash suspicious file
+Get-FileHash -Algorithm SHA256 "C:\Users\demondmack1976\AppData\Local\Temp\suspicious.exe"
+# Submit hash to VirusTotal for analysis</div>
+                </div>
+              </div>
+              <div class="sh" style="margin-top:16px">Scope — Isolated or Widespread</div>
+              <div class="step-box">
+                <div class="step-item"><strong>Check:</strong> Other users targeted? — index=gophish msg="Email sent" | stats count by email</div>
+                <div class="step-item"><strong>Check:</strong> Other machines visited phishing URL? — Sysmon DNS logs across all hosts</div>
+                <div class="step-item"><strong>If widespread:</strong> Full incident declaration → IR team → executive notification → org-wide password reset</div>
+              </div>
+            </div>
+            <div class="tp" id="c3-ev">
+              <p class="body-text" style="margin-bottom:16px;">Evidence collected — GoPhish dashboard, Papercut inbox, credential capture, Splunk investigation queries.</p>
+              <div class="ev-grid">
+                <div class="ev-slot"><div class="ev-img-placeholder">📧</div><div class="ev-caption"><div class="ev-caption-title">Papercut Inbox</div><div class="ev-caption-sub">Phishing email delivered — M365 subject line</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">🎣</div><div class="ev-caption"><div class="ev-caption-title">Rendered Phishing Email</div><div class="ev-caption-sub">Microsoft branding and urgency message</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">🔐</div><div class="ev-caption"><div class="ev-caption-title">Fake M365 Login Page</div><div class="ev-caption-sub">Landing page at 10.0.0.5/?rid=EzTGqOq</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">💀</div><div class="ev-caption"><div class="ev-caption-title">Credentials Captured</div><div class="ev-caption-sub">Username and password harvested in cleartext</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">📊</div><div class="ev-caption"><div class="ev-caption-title">GoPhish Dashboard</div><div class="ev-caption-sub">Email Sent=1, Clicked=1, Submitted=1</div></div></div>
+                <div class="ev-slot"><div class="ev-img-placeholder">✅</div><div class="ev-caption"><div class="ev-caption-title">No Breach Confirmed</div><div class="ev-caption-sub">8 investigation phases — all clean results</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="about" style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="sec-inner">
+    <div class="sec-eye reveal">Background</div>
+    <div class="sec-title reveal">About</div>
+    <div class="about-grid reveal">
+      <div class="about-text">
+        <p>SOC Analyst with hands-on experience building and operating an enterprise-grade security operations environment. I designed, deployed, and integrated a full detection and response stack from scratch — SIEM, IDS, ticketing, Active Directory, and phishing simulation — on Azure cloud infrastructure.</p>
+        <p>My investigations use real external attack telemetry, not simulated lab traffic. Real attackers hit my environment. I detected them, investigated them, and documented the analyst workflow from first alert to resolved ticket.</p>
+        <p style="font-style:italic;border-left:2px solid var(--cyan);padding-left:14px;color:var(--text-muted)">I built this because I wanted to show what I can actually do — not just what I've studied. Every detection, every investigation, every case study in this portfolio reflects how I'd operate in a real SOC environment.</p>
+      </div>
+      <div>
+        <div class="sh" style="margin-bottom:12px">Certifications</div>
+        <ul class="skills-list" style="margin-bottom:2rem">
+          <li class="skill-item"><span class="skill-dot"></span>CompTIA Security+</li>
+          <li class="skill-item"><span class="skill-dot"></span>Google Cybersecurity Certificate</li>
+          <li class="skill-item"><span class="skill-dot"></span>TryHackMe — SOC Level 1</li>
+          <li class="skill-item"><span class="skill-dot"></span>SOC Core Skills — Antisyphon Training</li>
+        </ul>
+        <div class="sh" style="margin-bottom:12px">Technical Skills</div>
+        <ul class="skills-list">
+          <li class="skill-item"><span class="skill-dot"></span>Splunk Enterprise — Detection &amp; Investigation</li>
+          <li class="skill-item"><span class="skill-dot"></span>ServiceNow — Incident Management</li>
+          <li class="skill-item"><span class="skill-dot"></span>Suricata IDS — Network Threat Detection</li>
+          <li class="skill-item"><span class="skill-dot"></span>Azure Cloud — Infrastructure &amp; NSG</li>
+          <li class="skill-item"><span class="skill-dot"></span>Active Directory — Domain Administration</li>
+          <li class="skill-item"><span class="skill-dot"></span>Sysmon — Endpoint Telemetry</li>
+          <li class="skill-item"><span class="skill-dot"></span>GoPhish — Phishing Simulation</li>
+          <li class="skill-item"><span class="skill-dot"></span>MITRE ATT&amp;CK Framework</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="sec-inner">
+    <div class="sec-eye reveal">Get In Touch</div>
+    <div class="sec-title reveal">Contact</div>
+    <div class="sec-sub reveal">Open to SOC Analyst, Security Operations, and Threat Detection roles.</div>
+    <div class="contact-grid reveal">
+      <a href="mailto:demondmack2@gmail.com" class="contact-card"><div class="cc-label">Email</div><div class="cc-value">demondmack2@gmail.com</div></a>
+      <a href="https://github.com/DemondMack" target="_blank" class="contact-card"><div class="cc-label">GitHub</div><div class="cc-value">github.com/DemondMack</div></a>
+      <a href="https://linkedin.com/in/demondmack" target="_blank" class="contact-card"><div class="cc-label">LinkedIn</div><div class="cc-value">linkedin.com/in/demondmack</div></a>
+      <a href="https://demondmack-security.com" class="contact-card"><div class="cc-label">Portfolio</div><div class="cc-value">demondmack-security.com</div></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Demond Mack // SOC Analyst Portfolio // demondmack-security.com</p>
+</footer>
+
+<script>
+/* ========= LOG FEED ========= */
+const LOGS=[
+  {c:'ll-d',t:'2026-06-07T01:06:01Z [INFO]  suricata  alert tcp 194.165.16.167 -> 10.0.0.5:3389  ET POLICY MS Remote Desktop Administrator Login Request'},
+  {c:'ll-i',t:'2026-06-07T01:06:02Z [INFO]  splunk    index=suricata event_type=alert src_ip=194.165.16.167 signature="ET POLICY RDP Admin Login"'},
+  {c:'ll-w',t:'2026-06-07T01:06:15Z [WARN]  eventlog  EventCode=4625 LogonType=3 IpAddress=123.30.106.163 TargetUserName=Administrator Status=0xc000006d'},
+  {c:'ll-a',t:'2026-06-07T01:06:31Z [ALERT] splunk    Brute Force Detection fired  40 failures threshold  INC0010660 created Priority=1-Critical'},
+  {c:'ll-c',t:'2026-06-07T01:06:32Z [CRIT]  servicenow INC0010660 State=New Priority=1-Critical Caller=splunk_integration AssignedTo=dmack'},
+  {c:'ll-d',t:'2026-06-07T01:07:01Z [INFO]  suricata  ET DROP Dshield Block Listed Source group 1 src=147.185.132.210 dst=10.0.0.5 dpt=3389'},
+  {c:'ll-i',t:'2026-06-07T01:07:35Z [INFO]  gophish   10.0.0.5 GET /?rid=EzTGqOq HTTP/1.1 200 807  Chrome/149.0.0.0'},
+  {c:'ll-w',t:'2026-06-07T01:07:51Z [WARN]  gophish   10.0.0.5 POST /?rid=EzTGqOq HTTP/1.1 302  credentials submitted  username=demondmack1976@suffice.local'},
+  {c:'ll-a',t:'2026-06-07T01:08:45Z [ALERT] sysmon    EventCode=1 Image=powershell.exe CommandLine=-EncodedCommand SABpAGQAZABlAG4A ParentImage=cmd.exe'},
+  {c:'ll-c',t:'2026-06-07T01:09:01Z [CRIT]  splunk    LSASS Memory Dump Detection  T1003.001  host=WIN-SERVER-CLIE user=SYSTEM'},
+  {c:'ll-d',t:'2026-06-07T01:09:22Z [INFO]  eventlog  EventCode=4624 LogonType=3 TargetUserName=demondmack1976 IpAddress=96.89.65.77'},
+  {c:'ll-w',t:'2026-06-07T01:09:45Z [WARN]  suricata  ET SCAN Potential SSH Scan OUTBOUND src=88.214.25.121 dst=10.0.0.5 dpt=22'},
+  {c:'ll-i',t:'2026-06-07T01:10:12Z [INFO]  servicenow INC0013219 assigned dmack State=In-Progress Priority=1-Critical DetectionSource=SIEM'},
+  {c:'ll-a',t:'2026-06-07T01:10:33Z [ALERT] splunk    Suspicious CMD Spawning PowerShell  WIN-SERVER-CLIE  MITRE T1059.001'},
+  {c:'ll-c',t:'2026-06-07T01:11:28Z [CRIT]  splunk    GoPhish phishing email alert fired  demondmack1976@suffice.local  from it-support@suffice.local'},
+  {c:'ll-w',t:'2026-06-07T01:12:01Z [WARN]  eventlog  EventCode=4728 MemberName=CN=soclabtest GroupName=Domain-Admins SubjectUser=dadmin'},
+  {c:'ll-i',t:'2026-06-07T01:12:44Z [INFO]  suricata  233 unique source IPs across 23 signatures detected  campaign window 4hr 22min'},
+  {c:'ll-a',t:'2026-06-07T01:13:15Z [ALERT] splunk    Scheduled Task Creation EventCode=4698 TaskName=WindowsUpdate  T1053.005'},
+  {c:'ll-c',t:'2026-06-07T01:13:58Z [CRIT]  servicenow INC0010660 resolved by dmack  RootCause=NSG-0.0.0.0/0  Remediation=NSG-restricted'},
+  {c:'ll-d',t:'2026-06-07T01:14:20Z [INFO]  splunk    Security Tool Disabled alert  EventCode=7036 Defender service stopped  T1562.001'},
+];
+
+function buildLogs(){
+  const inner=document.getElementById('logInner');
+  if(!inner)return;
+  const triple=[...LOGS,...LOGS,...LOGS,...LOGS];
+  triple.forEach(l=>{
+    const el=document.createElement('div');
+    el.className='ll '+l.c;
+    el.textContent=l.t;
+    inner.appendChild(el);
+  });
+  let offset=0;
+  const lineH=20;
+  const total=LOGS.length*lineH;
+  function tick(){
+    offset+=0.5;
+    if(offset>=total)offset=0;
+    inner.style.transform='translateY(-'+offset+'px)';
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ========= SCAN LINE ========= */
+function buildScan(){
+  const s=document.getElementById('scanLine');
+  if(!s)return;
+  const hero=document.querySelector('.hero');
+  let y=0;
+  function tick(){
+    y+=1;
+    const h=hero?hero.offsetHeight:800;
+    if(y>h)y=0;
+    s.style.top=y+'px';
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ========= COUNT UP ========= */
+function countUp(id,target,dur){
+  const el=document.getElementById(id);
+  if(!el)return;
+  let t0=null;
+  function step(ts){
+    if(!t0)t0=ts;
+    const p=Math.min((ts-t0)/dur,1);
+    const e=1-Math.pow(1-p,3);
+    el.textContent=Math.floor(e*target).toLocaleString();
+    if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ========= DIAGRAM ========= */
+const PIPE_HIGHLIGHTS={
+  p1:{
+    show:['hl-dc-splunk','hl-splunk-sn-p1'],
+    boxes:['box-dc','box-splunk','box-sn'],
+    label:'Pipeline 01 — Endpoint: Windows Events → Sysmon → Azure NSG → Splunk → ServiceNow'
+  },
+  p2:{
+    show:['hl-client-splunk','hl-splunk-sn-p2','hl-threats'],
+    boxes:['box-client','box-splunk','box-sn','box-threats'],
+    label:'Pipeline 02 — Network IDS: Suricata on WIN-SERVER-CLIE → Azure NSG → Splunk → ServiceNow'
+  },
+  p3:{
+    show:['hl-gophish-splunk','hl-splunk-sn-p3'],
+    boxes:['box-client','box-splunk','box-sn'],
+    label:'Pipeline 03 — Phishing: GoPhish → Papercut SMTP → Azure NSG → Splunk → ServiceNow'
+  }
+};
+
+function showDiag(pipe){
+  const cfg=PIPE_HIGHLIGHTS[pipe];
+  const overlay=document.getElementById('diagOverlay');
+  const titleEl=document.getElementById('diagTitle');
+
+  // reset all highlights
+  document.querySelectorAll('[id^="hl-"]').forEach(el=>el.style.display='none');
+  document.querySelectorAll('[id^="box-"]').forEach(el=>{
+    el.style.stroke='#1a2240';
+    el.style.opacity='0.5';
+  });
+  document.querySelectorAll('[id^="top-"]').forEach(el=>el.style.opacity='0.2');
+
+  // apply highlights
+  cfg.show.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display='block';
+  });
+  cfg.boxes.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.style.stroke='#00d4ff';el.style.opacity='1';}
+  });
+  // brighten tops of highlighted boxes
+  cfg.boxes.forEach(id=>{
+    const top=document.getElementById('top-'+id.replace('box-',''));
+    if(top)top.style.opacity='0.8';
+  });
+
+  titleEl.textContent=cfg.label;
+  overlay.classList.add('show');
+}
+
+function closeDiag(e){
+  if(e.target===document.getElementById('diagOverlay')){
+    document.getElementById('diagOverlay').classList.remove('show');
+    // reset
+    document.querySelectorAll('[id^="hl-"]').forEach(el=>el.style.display='none');
+    document.querySelectorAll('[id^="box-"]').forEach(el=>{el.style.stroke='#1a2240';el.style.opacity='1';});
+    document.querySelectorAll('[id^="top-"]').forEach(el=>el.style.opacity='');
+  }
+}
+
+/* ========= TABS ========= */
+function switchTab(e,caseId,tabId){
+  e.stopPropagation();
+  const card=document.getElementById(caseId);
+  card.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));
+  card.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  const pane=document.getElementById(caseId+'-'+tabId);
+  if(pane)pane.classList.add('on');
+  e.currentTarget.classList.add('on');
+}
+
+function toggleCase(id){document.getElementById(id).classList.toggle('open');}
+function toggleFitem(id){document.getElementById(id).classList.toggle('open');}
+
+/* ========= REVEAL ========= */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')});
+},{threshold:0.06});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* ========= INIT ========= */
+window.addEventListener('DOMContentLoaded',()=>{
+  buildLogs();
+  buildScan();
+  setTimeout(()=>{
+    countUp('hn1',14661,2200);
+    countUp('hn2',2327,1800);
+    countUp('hn3',3,600);
+    countUp('hn4',13,900);
+  },600);
+});
+</script>
+</body>
+</html>
